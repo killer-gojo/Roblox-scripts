@@ -1,9 +1,10 @@
 -- By killer_gojo
 
 -- ** CHARGEMENT DE LA LIBRAIRIE APPLELIBRARY **
--- Cette librairie est choisie pour sa légèreté et sa compatibilité mobile.
+-- Cette librairie est choisie pour sa légèreté et sa compatibilité mobile (KRNL Android).
 local library = loadstring(game:HttpGet("https://github.com/GoHamza/AppleLibrary/blob/main/main.lua?raw=true"))()
 
+-- Initialisation de la fenêtre. (RightShift pour afficher/cacher)
 local window = library:init("Simple Hub V0.4.2", true, Enum.KeyCode.RightShift, true)
 
 -- Services et Variables
@@ -35,11 +36,11 @@ local function TeleportPlayer(targetPos)
 end
 
 -- ====================================================================
--- TABS (ONGLETS)
+-- TABS (ONGLETS) - Utilisation de :add_tab()
 -- ====================================================================
 
 -- I. Main (Mouvement)
-local MainTab = window:Tab("Main")
+local MainTab = window:add_tab("Main")
 
 local function SetWalkSpeed(speed) local human = Player.Character and Player.Character.Humanoid if human then human.WalkSpeed = speed end end
 local function SetJumpPower(power) local human = Player.Character and Player.Character.Humanoid if human then human.JumpPower = power end end
@@ -81,7 +82,7 @@ MainTab:Slider("Gravity", 0, 196.2, 1, SetGravity, 196.2)
 
 
 -- II. Visual
-local VisualTab = window:Tab("Visual")
+local VisualTab = window:add_tab("Visual")
 
 local IsESPActive, IsChamsActive, TeamESP = false, false, true
 local function UpdateVisuals(name, Value) print("Visuals logic called for: " .. name .. " - " .. tostring(Value)) end
@@ -92,7 +93,7 @@ VisualTab:Toggle("Draw Box", true, function(Value) UpdateVisuals("Draw Box", Val
 VisualTab:Toggle("Team ESP (Prioritaire)", TeamESP, function(Value) TeamESP = Value; UpdateVisuals("Team ESP", Value) end)
 
 -- III. Teleport
-local TeleportTab = window:Tab("Teleport")
+local TeleportTab = window:add_tab("Teleport")
 local InitialSpawnPosition = Player.Character and Player.Character.HumanoidRootPart.Position or Vector3.new(0, 50, 0)
 
 -- TP to Cursor nécessite une boucle, l'activation est via le Keybind
@@ -118,6 +119,7 @@ local YInput = TeleportTab:Input("Y Coordinate", "0")
 local ZInput = TeleportTab:Input("Z Coordinate", "0")
 
 TeleportTab:Button("Teleport to Coords", function()
+    -- L'AppleLibrary renvoie les données d'Input dans un champ .Instance, comme Rayfield
     local x, y, z = tonumber(XInput.Instance.Text) or 0, tonumber(YInput.Instance.Text) or 0, tonumber(ZInput.Instance.Text) or 0
     if x and y and z then TeleportPlayer(Vector3.new(x, y, z)) end
 end)
@@ -130,12 +132,6 @@ local WaypointsList = {}
 TeleportTab:Section("Waypoints")
 local WPNameInput = TeleportTab:Input("Waypoint Name", "New WP")
 
-local function RenderWaypoints()
-    -- L'AppleLibrary ne permet pas de créer des listes dynamiques facilement, 
-    -- nous allons garder la gestion simple:
-    print("INFO: Waypoints List needs refresh, current count: " .. #WaypointsList)
-end
-
 TeleportTab:Button("Create Waypoint", function()
     local name = WPNameInput.Instance.Text
     local currentPos = Player.Character and Player.Character.HumanoidRootPart.Position
@@ -144,11 +140,11 @@ TeleportTab:Button("Create Waypoint", function()
     local newWaypoint = {Name = wpName, X = currentPos.X, Y = currentPos.Y, Z = currentPos.Z}
     table.insert(WaypointsList, newWaypoint)
     print("Waypoint '" .. wpName .. "' created in memory.")
-    RenderWaypoints()
+    -- Si la librairie le supporte, on pourrait ajouter un bouton de TP ici pour le waypoint créé.
 end)
 
 -- IV. Fling
-local FlingTab = window:Tab("Fling")
+local FlingTab = window:add_tab("Fling")
 local FlingPower, FlingAuraRadius, FlingAuraActive = 500, 10, false
 
 local function ApplyFling(targetHRP)
@@ -176,7 +172,7 @@ FlingTab:Slider("Power", 100, 10000, 100, function(Value) FlingPower = Value end
 
 
 -- V. AC Bypass
-local ACBypassTab = window:Tab("AC Bypass")
+local ACBypassTab = window:add_tab("AC Bypass")
 local function KillAC(state)
     if state then
         local hrp = Player.Character and Player.Character.HumanoidRootPart
@@ -191,8 +187,8 @@ KillAC(true)
 
 
 -- VI. General & VII. Credits
-local GeneralTab = window:Tab("General")
-local CreditsTab = window:Tab("Credits")
+local GeneralTab = window:add_tab("General")
+local CreditsTab = window:add_tab("Credits")
 
 GeneralTab:Label("Configuration", "Sauvegarde et Chargement manuel de la configuration non supporté dans cette librairie minimaliste.")
 GeneralTab:Button("Simuler Sauvegarde", function() print("INFO: Sauvegarde simulée.") end)
