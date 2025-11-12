@@ -1,6 +1,11 @@
 -- By killer_gojo
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- ** PATCH: Chargement Rayfield plus stable **
+local HttpService = game:GetService("HttpService")
+local RayfieldSource = game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source', true)
+local Rayfield = loadstring(RayfieldSource)()
+-- ** FIN PATCH **
+
 local Player = game.Players.LocalPlayer
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
